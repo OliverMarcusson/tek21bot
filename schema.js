@@ -127,24 +127,25 @@ let schema = [
         hall: '909'
     },
 ]
+
 days = [null, 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
 
-function findLection() {
-    const date = new Date()
-    const currenttime = `${date.getHours()}${date.getMinutes() + 10}`
-    const currentday = days[date.getUTCDay()]
-
-    let result = schema.find(({ day, time }) => day === currentday && time === currenttime)
-    if (result != -1) {
-        return result;
-    } else {
-        return false;
-    }
-}
 
 module.exports = {
     schema: schema,
     days: days,
-    findLection: findLection()
+}
+
+module.exports.findLection = function findLection(_klass) {
+    const date = new Date()
+    const currenttime = `${date.getHours()}${date.getMinutes() + 10}`
+    const currentday = days[date.getUTCDay()]
+
+    let result = schema.find(({ klass, day, time }) => klass === _klass && day === currentday && time === currenttime)
+    if (result) {
+        return result;
+    } else {
+        return false;
+    }
 }
