@@ -1,6 +1,7 @@
 // Importing //
 const discord = require('discord.js');
 const schema = require('./schema')
+const sl = require('./sl')
 require('dotenv').config();
 // Done importing //
 
@@ -29,9 +30,17 @@ function main() {
     client.on('interactionCreate', async interaction => {
         let commandName = interaction.commandName;
         if (!interaction.isChatInputCommand) return;
-        console.log(interaction)
         if (commandName === 'ping') {
             await interaction.reply('pling plong ding dong.')
+        } else if (commandName === 'busstillforum') {
+            const travelInfo = await sl.main()
+            const busEmbed = new discord.EmbedBuilder()
+            .setColor('Green')
+            .setThumbnail('https://sl.nobina.com/globalassets/images/sl/sl_logo_vit_rgb.png')    
+            .setTitle('Nästa Buss')
+            .setDescription(`Tid för avgång vid hållplats ${discord.bold(travelInfo.departureName)}: ${travelInfo.departureTime} (om ${discord.bold(travelInfo.departureTimeLeft)} minuter).\n\nTid för ankomst vid hållplats ${travelInfo.arrivalName}: ${travelInfo.arrivalTime}.`)
+            .setFooter({ text: 'Embed gjord av TekBot' });
+            await interaction.reply({embeds: [busEmbed]})
         }
     })
     
