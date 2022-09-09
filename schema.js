@@ -143,7 +143,7 @@ module.exports.findLection = function findLection(_klass) {
     const currentday = days[date.getUTCDay()]
 
     let result = schema.find(({ klass, day, time }) => klass === _klass && day === currentday && time === currenttime)
-    if (result) {
+    if (typeof result !== "undefined") {
         return result;
     } else {
         return false;
