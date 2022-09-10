@@ -91,33 +91,30 @@ client.on('interactionCreate', async interaction => {
     if (commandName === 'ping') {
         await interaction.reply('pling plong ding dong.');
     } 
-    
-    else if (commandName === 'forum') {
-        const travelInfo = await sl.main();
-        const busEmbed = new discord.EmbedBuilder()
-        .setColor('Green')
-        .setThumbnail('https://sl.nobina.com/globalassets/images/sl/sl_logo_vit_rgb.png')    
-        .setTitle('Nästa Buss')
-        .setDescription(`Tid för avgång vid hållplats ${discord.bold(travelInfo.departureName)}: ${travelInfo.departureTime} (om ${discord.bold(travelInfo.departureTimeLeft)} minuter).\n\nTid för ankomst vid hållplats ${travelInfo.arrivalName}: ${travelInfo.arrivalTime}.`)
-        .setFooter({ text: `TekBot av @F4ith2#7882` });
-        await interaction.reply({embeds: [busEmbed]})
-    }
 
     else if (commandName === 'strand') {
-        const departureData = await sldepartures.main()
-        const busEmbed = new discord.EmbedBuilder()
-        .setColor('Green')
-        .setThumbnail('https://sl.nobina.com/globalassets/images/sl/sl_logo_vit_rgb.png')    
-        .setTitle('Kommande Bussar')
-        .setDescription(`Information om bussar från Nacka Strand.`)
-        .addFields([
-            { name: '840', value: `Mot ${departureData._840.destination} om ${discord.bold(`${departureData._840.departureTime}`)}\n`}, 
-            { name: '465', value: `Mot ${departureData._465.destination} om ${discord.bold(`${departureData._465.departureTime}`)}\n`},
-            { name: '443', value: `Mot ${departureData._443.destination} om ${discord.bold(`${departureData._443.departureTime}`)}\n`},
-            { name: '71', value: `Mot ${departureData._71.destination} om ${discord.bold(`${departureData._71.departureTime}`)}\n`},
-        ])
-        .setFooter({ text: `TekBot av @F4ith2#7882` });
-        await interaction.reply({embeds: [busEmbed]});
+        try {
+            const departureData = await sldepartures.main()
+            const strandEmbed = new discord.EmbedBuilder()
+            .setColor('Green')
+            .setThumbnail('https://sl.nobina.com/globalassets/images/sl/sl_logo_vit_rgb.png')    
+            .setTitle('Kommande Bussar')
+            .setDescription(`Information om bussar från ${discord.bold('Nacka Strand')}.`)
+            
+            .addFields([
+                { name: '840', value: checkIfBusShouldDisplay(departureData._840)}, 
+                { name: '465', value: checkIfBusShouldDisplay(departureData._465)},
+                { name: '443', value: checkIfBusShouldDisplay(departureData._443)},
+                { name: '71', value: checkIfBusShouldDisplay(departureData._71)},
+            ])
+            .setFooter({ text: `TekBot av @F4ith2#7882` });
+    
+            await interaction.reply({embeds: [strandEmbed]});
+        }
+        catch {
+           console.log('Error getting bus info.') 
+        }
+        
     }
 });
 
