@@ -75,7 +75,7 @@ client.once('ready', () => {
             ])
             .setFooter({ text: `TekBot av @F4ith2#7882` });
     
-            busChannel.messages.edit('1018116978424164402', { content: `${discord.bold('[LIVE]')} Uppdateras varje minut.`, embeds: [strandEmbed]})
+            busChannel.messages.edit('1018116978424164402', { content: `${discord.bold('[LIVE]')} Uppdateras varje 30:e sekund.`, embeds: [strandEmbed] })
         }
         catch {
            console.log('Error getting bus info.') 
