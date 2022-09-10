@@ -17,9 +17,17 @@ const date = new Date();
 
 const timeStamp = () => {return `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;}
 
+const checkIfBusShouldDisplay = (departureData) => {
+    if (departureData.departureTime) {
+        return `Mot ${departureData.destination} om ${discord.bold(`${departureData.departureTime}`)}\n`;
+    } 
+    else {
+        return `Avgår inte för tillfället.\n`;
+    }}
+
 const client = new discord.Client({ intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.MessageContent] });
 // Done declaring constants
-    
+
 // Bot is online
 client.once('ready', () => {
     console.log(`${timeStamp()} Bot is online.`)
@@ -48,26 +56,28 @@ client.once('ready', () => {
         
         try {
             const departureData = await sldepartures.main()
+            console.log(departureData)
             const strandEmbed = new discord.EmbedBuilder()
             .setColor('Green')
             .setThumbnail('https://sl.nobina.com/globalassets/images/sl/sl_logo_vit_rgb.png')    
             .setTitle('Kommande Bussar')
             .setDescription(`Information om bussar från ${discord.bold('Nacka Strand')}.`)
+            
             .addFields([
-                { name: '840', value: `Mot ${departureData._840.destination} om ${discord.bold(`${departureData._840.departureTime}`)}\n`}, 
-                { name: '465', value: `Mot ${departureData._465.destination} om ${discord.bold(`${departureData._465.departureTime}`)}\n`},
-                { name: '443', value: `Mot ${departureData._443.destination} om ${discord.bold(`${departureData._443.departureTime}`)}\n`},
-                { name: '71', value: `Mot ${departureData._71.destination} (via Sickla udde) om ${discord.bold(`${departureData._71.departureTime}`)}\n`},
+                { name: '840', value: checkIfBusShouldDisplay(departureData._840)}, 
+                { name: '465', value: checkIfBusShouldDisplay(departureData._465)},
+                { name: '443', value: checkIfBusShouldDisplay(departureData._443)},
+                { name: '71', value: checkIfBusShouldDisplay(departureData._71)},
             ])
             .setFooter({ text: `TekBot av @F4ith2#7882` });
     
             busChannel.messages.edit('1018116978424164402', { content: `${discord.bold('[LIVE]')} Uppdateras varje minut.`, embeds: [strandEmbed]})
         }
         catch {
-            console.log(`Couldn't update bus times because of an error.`)
+           console.log('Error getting bus info.') 
         }
         
-    }, 60 * 1000);
+    }, 30 * 1000);
 });
 
 client.on('interactionCreate', async interaction => {

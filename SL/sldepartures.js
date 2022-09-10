@@ -14,6 +14,16 @@ async function main() {
         return `https://webcloud.sl.se/api/v2/departures?mode=departures&origPlaceId=${place.origPlaceId}&origSiteId=${place.origSiteId}&desiredResults=3&origName=${place.origName}`;
     };
 
+    const checkBus = (responseData, stationName) => {
+        try {
+            const destination = responseData.find(({ destination }) => destination === stationName).time.displayTime;
+            return destination;
+        } 
+        catch {
+            return false;
+        }
+    };
+
     const getDepartureData = async (place) => {
         const departureData = await Axios
         .get(createApiRequest(place))
@@ -22,22 +32,22 @@ async function main() {
             const departureData = {
                 _840: {
                     destination: 'Handens station',
-                    departureTime: responseData.find(({ destination }) => destination === 'Handens station').time.displayTime,
+                    departureTime: checkBus(responseData, 'Handens station'),
                     line: '840'
                 },
                 _465: {
                     destination: 'Fisksätra',
-                    departureTime: responseData.find(({ destination }) => destination === 'Fisksätra').time.displayTime,
+                    departureTime: checkBus(responseData, 'Fisksätra'),
                     line: '465'
                 },
                 _443: {
                     destination: 'Slussen',
-                    departureTime: responseData.find(({ destination }) => destination === 'Slussen').time.displayTime,
+                    departureTime: checkBus(responseData, 'Slussen'),
                     line: '443'
                 },
                 _71: {
                     destination: 'Glasbruksgatan',
-                    departureTime: responseData.find(({ destination }) => destination === 'Glasbruksgatan').time.displayTime,
+                    departureTime: checkBus(responseData, 'Glasbruksgatan'),
                     line: '71'
                 }
             };
