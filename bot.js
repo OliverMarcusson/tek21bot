@@ -56,7 +56,6 @@ client.once('ready', () => {
         
         try {
             const departureData = await sldepartures.main()
-            console.log(departureData)
             const strandEmbed = new discord.EmbedBuilder()
             .setColor('Green')
             .setThumbnail('https://sl.nobina.com/globalassets/images/sl/sl_logo_vit_rgb.png')    
