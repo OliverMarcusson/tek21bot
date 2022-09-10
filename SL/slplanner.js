@@ -22,6 +22,7 @@ async function main() {
     const travelInfo = await Axios
     .get(url)
     .then(response => {
+        console.log(response.data.travels[0].legs[0].transport.line)
         const travelInfo = {
             departureName: response.data.travels[0].origin.name,
             arrivalName: response.data.travels[0].destination.name,
@@ -29,7 +30,7 @@ async function main() {
             departureTimeLeft: null,
             arrivalTime: response.data.travels[0].destination.arrivalTime.realTime.split('T')[1].slice(0, 5)
         };
-        travelInfo.departureTimeLeft = parseInt(travelInfo.departureTime.split(':')[1]) - date.getMinutes()
+        travelInfo.departureTimeLeft = parseInt(travelInfo.departureTime.split(':')[1]) - date.getMinutes() + (parseInt(travelInfo.arrivalTime.split(':')[0]) - date.getHours()) * 60
         // console.log(`Tid för avgång vid hållplats ${travelInfo.departureName}: ${travelInfo.departureTime}, Tid för ankomst vid hållplats ${travelInfo.arrivalName}: ${travelInfo.arrivalTime}`);
         return travelInfo;
     })

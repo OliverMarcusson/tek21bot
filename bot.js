@@ -1,7 +1,8 @@
 // Importing
 const discord = require('discord.js');
 const schema = require('./schema');
-const sl = require('./sl');
+const sl = require('./SL/slplanner');
+const sldepartures = require('./SL/sldepartures')
 require('dotenv').config();
 // Done importing
 
@@ -16,13 +17,14 @@ const date = new Date();
 
 const timeStamp = () => {return `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;}
 
-const client = new discord.Client({ intents: [discord.GatewayIntentBits.Guilds] });
+const client = new discord.Client({ intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.MessageContent] });
 // Done declaring constants
     
 // Bot is online
 client.once('ready', () => {
     console.log(`${timeStamp()} Bot is online.`)
-    schemaChannel = client.channels.cache.get('1017076611415298110');
+    const schemaChannel = client.channels.cache.get('1017076611415298110');
+    const busChannel = client.channels.cache.get('1018109840100446289');
 
     // Notification Service
     const findLectionInterval = setInterval(() => {
@@ -40,6 +42,32 @@ client.once('ready', () => {
         };
 
     }, 60 * 1000); // Seconds between each interval.
+
+    // Bus Service
+    const busInterval = setInterval(async () => {
+        
+        try {
+            const departureData = await sldepartures.main()
+            const strandEmbed = new discord.EmbedBuilder()
+            .setColor('Green')
+            .setThumbnail('https://sl.nobina.com/globalassets/images/sl/sl_logo_vit_rgb.png')    
+            .setTitle('Kommande Bussar')
+            .setDescription(`Information om bussar från ${discord.bold('Nacka Strand')}.`)
+            .addFields([
+                { name: '840', value: `Mot ${departureData._840.destination} om ${discord.bold(`${departureData._840.departureTime}`)}\n`}, 
+                { name: '465', value: `Mot ${departureData._465.destination} om ${discord.bold(`${departureData._465.departureTime}`)}\n`},
+                { name: '443', value: `Mot ${departureData._443.destination} om ${discord.bold(`${departureData._443.departureTime}`)}\n`},
+                { name: '71', value: `Mot ${departureData._71.destination} (via Sickla udde) om ${discord.bold(`${departureData._71.departureTime}`)}\n`},
+            ])
+            .setFooter({ text: `TekBot av @F4ith2#7882` });
+    
+            busChannel.messages.edit('1018116978424164402', { content: `${discord.bold('[LIVE]')} Uppdateras varje minut.`, embeds: [strandEmbed]})
+        }
+        catch {
+            console.log(`Couldn't update bus times because of an error.`)
+        }
+        
+    }, 60 * 1000);
 });
 
 client.on('interactionCreate', async interaction => {
@@ -59,7 +87,24 @@ client.on('interactionCreate', async interaction => {
         .setDescription(`Tid för avgång vid hållplats ${discord.bold(travelInfo.departureName)}: ${travelInfo.departureTime} (om ${discord.bold(travelInfo.departureTimeLeft)} minuter).\n\nTid för ankomst vid hållplats ${travelInfo.arrivalName}: ${travelInfo.arrivalTime}.`)
         .setFooter({ text: `TekBot av @F4ith2#7882` });
         await interaction.reply({embeds: [busEmbed]})
-    };
+    }
+
+    else if (commandName === 'strand') {
+        const departureData = await sldepartures.main()
+        const busEmbed = new discord.EmbedBuilder()
+        .setColor('Green')
+        .setThumbnail('https://sl.nobina.com/globalassets/images/sl/sl_logo_vit_rgb.png')    
+        .setTitle('Kommande Bussar')
+        .setDescription(`Information om bussar från Nacka Strand.`)
+        .addFields([
+            { name: '840', value: `Mot ${departureData._840.destination} om ${discord.bold(`${departureData._840.departureTime}`)}\n`}, 
+            { name: '465', value: `Mot ${departureData._465.destination} om ${discord.bold(`${departureData._465.departureTime}`)}\n`},
+            { name: '443', value: `Mot ${departureData._443.destination} om ${discord.bold(`${departureData._443.departureTime}`)}\n`},
+            { name: '71', value: `Mot ${departureData._71.destination} om ${discord.bold(`${departureData._71.departureTime}`)}\n`},
+        ])
+        .setFooter({ text: `TekBot av @F4ith2#7882` });
+        await interaction.reply({embeds: [busEmbed]});
+    }
 });
 
 client.login(env.token);

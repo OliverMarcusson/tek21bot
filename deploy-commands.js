@@ -10,7 +10,7 @@ const env = {
 
 const commands = [
     new discord.SlashCommandBuilder().setName('ping').setDescription('Pong!'),
-    new discord.SlashCommandBuilder().setName('forum').setDescription('Skickar informationen om nästa buss till Nacka Forum från Nacka Strand.')
+    new discord.SlashCommandBuilder().setName('strand').setDescription('Skickar informationen om kommande bussar från Nacka Strand.')
 ]
     .map(command => command.toJSON());
 
