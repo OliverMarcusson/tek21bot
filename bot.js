@@ -36,9 +36,14 @@ client.once('ready', () => {
 
     // Notification Service
     const findLectionInterval = setInterval(() => {
-    
         const result = schema.findLection('tetek21');
         if (result) {
+            
+            schemaChannel.messages.fetch({ limit: 1 }).then(message => {
+                const lastMessage = message.first();
+                if (lastMessage.author.bot === true) {schemaChannel.messages.delete(lastMessage.id)}
+            })
+            
             const lectionEmbed = new discord.EmbedBuilder()
             .setColor('Blue')
             .setThumbnail('https://pbs.twimg.com/profile_images/1266709827427983362/MOHuOmgX_400x400.jpg')    
@@ -47,8 +52,8 @@ client.once('ready', () => {
             .setFooter({ text: `TekBot av @F4ith2#7882` });
             
             schemaChannel.send({ content: `${discord.roleMention('1017449064222175315')}`, embeds: [lectionEmbed]});
-        };
 
+        };
     }, 60 * 1000); // Seconds between each interval.
 
     // Bus Service
