@@ -1,5 +1,7 @@
 
-let schema = [
+const bot = require('./bot')
+
+const schema = [
     {
         klass: 'tetek21',
         day: 'monday',
@@ -130,22 +132,19 @@ let schema = [
 
 days = [null, 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
-
-
-module.exports = {
-    schema: schema,
-    days: days,
-}
-
 module.exports.findLection = function findLection(_klass) {
     const date = new Date()
     const currenttime = `${date.getHours()}${date.getMinutes() + 10}`
     const currentday = days[date.getUTCDay()]
 
+    console.log(`${bot.timeStamp()} Searching for lection with time: ${currenttime}, day: ${currentday}`)
+
     let result = schema.find(({ klass, day, time }) => klass === _klass && day === currentday && time === currenttime)
     if (typeof result !== "undefined") {
+        console.log(`>> Found lection: ${result.lection}, for class: ${result.klass}!\n`)
         return result;
     } else {
+        console.log(`>> Didn't find any lections matching the criteria.\n`)
         return false;
     }
 }

@@ -15,7 +15,10 @@ const env = {
 
 const date = new Date();
 
-const timeStamp = () => {return `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;}
+const timeStamp = () => {
+    const date = new Date();
+    return `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
+}
 
 const checkIfBusShouldDisplay = (departureData) => {
     if (departureData.departureTime) {
@@ -42,6 +45,7 @@ client.once('ready', () => {
             schemaChannel.messages.fetch({ limit: 1 }).then(message => {
                 const lastMessage = message.first();
                 if (lastMessage.author.bot === true) {schemaChannel.messages.delete(lastMessage.id)}
+                
             })
             
             const lectionEmbed = new discord.EmbedBuilder()
@@ -119,5 +123,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.login(env.token);
+
+exports.timeStamp = timeStamp;
 
 
