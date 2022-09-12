@@ -134,7 +134,7 @@ days = [null, 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'
 
 module.exports.findLection = function findLection(_klass) {
     const date = new Date()
-    const currenttime = `${date.getHours()}${date.getMinutes() + 10}`
+    const currenttime = `${date.getUTCHours() + 2}${date.getUTCMinutes() + 10}`
     const currentday = days[date.getUTCDay()]
 
     console.log(`${bot.timeStamp()} Searching for lection with time: ${currenttime}, day: ${currentday}`)
