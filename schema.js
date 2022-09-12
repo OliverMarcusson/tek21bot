@@ -3,7 +3,7 @@ let schema = [
     {
         klass: 'tetek21',
         day: 'monday',
-        time: '0930',
+        time: '0910',
         lection: 'Svenska 2',
         hall: '811'
     },
