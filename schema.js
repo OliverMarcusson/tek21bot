@@ -5,7 +5,7 @@ const schema = [
     {
         klass: 'tetek21',
         day: 'monday',
-        time: '0910',
+        time: '910',
         lection: 'Svenska 2',
         hall: '811'
     },
@@ -134,12 +134,15 @@ days = [null, 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'
 
 module.exports.findLection = function findLection(_klass) {
     const date = new Date()
-    const currenttime = `${date.getUTCHours() + 2}${date.getUTCMinutes() + 10}`
+    const currenttime = () => {
+        if (date.getUTCMinutes() + 10 >= 60) {return `${date.getUTCHours() + 2 + 1}0${date.getUTCMinutes() + 10 - 60}`}
+        else {return `${date.getUTCHours() + 2}${date.getUTCMinutes() + 10}`}
+    }
     const currentday = days[date.getUTCDay()]
 
-    console.log(`${bot.timeStamp()} Searching for lection with time: ${currenttime}, day: ${currentday}`)
+    console.log(`${bot.timeStamp()} Searching for lection with time: ${currenttime()}, day: ${currentday}`)
 
-    let result = schema.find(({ klass, day, time }) => klass === _klass && day === currentday && time === currenttime)
+    let result = schema.find(({ klass, day, time }) => klass === _klass && day === currentday && time === currenttime())
     if (typeof result !== "undefined") {
         console.log(`>> Found lection: ${result.lection}, for class: ${result.klass}!\n`)
         return result;
