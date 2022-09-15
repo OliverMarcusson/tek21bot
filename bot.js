@@ -45,18 +45,17 @@ client.once('ready', () => {
             schemaChannel.messages.fetch({ limit: 1 }).then(message => {
                 const lastMessage = message.first();
                 if (lastMessage.author.bot === true) {schemaChannel.messages.delete(lastMessage.id)}
-                
             })
-            
-            const lectionEmbed = new discord.EmbedBuilder()
-            .setColor('Blue')
-            .setThumbnail('https://pbs.twimg.com/profile_images/1266709827427983362/MOHuOmgX_400x400.jpg')    
-            .setTitle(result.lection)
-            .setDescription(`Klass: ${result.klass}\nTid: ${result.time}\nKlassrum: ${result.hall}`)
-            .setFooter({ text: `TekBot av @F4ith2#7882` });
-            
-            schemaChannel.send({ content: `${discord.roleMention('1017449064222175315')}`, embeds: [lectionEmbed]});
-
+            .finally(() => {
+                const lectionEmbed = new discord.EmbedBuilder()
+                .setColor('Blue')
+                .setThumbnail('https://pbs.twimg.com/profile_images/1266709827427983362/MOHuOmgX_400x400.jpg')    
+                .setTitle(result.lection)
+                .setDescription(`Klass: ${result.klass}\nTid: ${result.time}\nKlassrum: ${result.hall}`)
+                .setFooter({ text: `TekBot av @F4ith2#7882` });
+                
+                schemaChannel.send({ content: `${discord.roleMention('1017449064222175315')}`, embeds: [lectionEmbed]});
+            })
         };
     }, 60 * 1000); // Seconds between each interval.
 
@@ -82,7 +81,8 @@ client.once('ready', () => {
             busChannel.messages.edit('1018116978424164402', { content: `${discord.bold('[LIVE]')} Uppdateras varje 30:e sekund.`, embeds: [strandEmbed] })
         }
         catch {
-           console.log('Error getting bus info.') 
+           console.log('Error getting bus info.')
+           busChannel.messages.edit('1018116978424164402', { content: `${discord.bold('Out of sync:')} SL:s API svarar inte för tillfället, prövar igen efter 30s.`, embeds: [strandEmbed] }) 
         }
         
     }, 30 * 1000);
